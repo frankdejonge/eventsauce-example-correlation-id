@@ -4,7 +4,7 @@ namespace FrankDeJonge\CommandIdCorrelation;
 
 use EventSauce\EventSourcing\AggregateRootId;
 
-class DummyAggregateRootId implements AggregateRootId
+class DummyId implements AggregateRootId
 {
     public function __construct(private string $id)
     {

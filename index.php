@@ -10,7 +10,8 @@ use FrankDeJonge\CommandIdCorrelation\CorrelatingMessageDecorator;
 use FrankDeJonge\CommandIdCorrelation\CorrelationIdTracker;
 use FrankDeJonge\CommandIdCorrelation\CorrelationTrackingConsumer;
 use FrankDeJonge\CommandIdCorrelation\DummyAggregateRoot;
-use FrankDeJonge\CommandIdCorrelation\DummyAggregateRootId;
+use FrankDeJonge\CommandIdCorrelation\DummyService;
+use FrankDeJonge\CommandIdCorrelation\DummyId;
 use FrankDeJonge\CommandIdCorrelation\HandleOriginalEvent;
 use FrankDeJonge\CommandIdCorrelation\OriginalEvent;
 use Ramsey\Uuid\Uuid;
@@ -39,10 +40,11 @@ $messageRepository = new InMemoryMessageRepository();
 $decorator = new CorrelatingMessageDecorator($correlationIdTracker);
 $aggregateRootRepository = new EventSourcedAggregateRootRepository(DummyAggregateRoot::class, $messageRepository, $messageDispatcher, $decorator);
 
-$actualConsumer = new HandleOriginalEvent($aggregateRootRepository);
+$service = new DummyService($aggregateRootRepository);
+$actualConsumer = new HandleOriginalEvent($service);
 $consumer = new CorrelationTrackingConsumer($correlationIdTracker, $actualConsumer);
 
-$consumer->handle(new Message(new OriginalEvent(), ['correlation-id' => $id = Uuid::uuid4()->toString(), Header::AGGREGATE_ROOT_ID => new DummyAggregateRootId('something')]));
+$consumer->handle(new Message(new OriginalEvent(), ['correlation-id' => $id = Uuid::uuid4()->toString(), Header::AGGREGATE_ROOT_ID => new DummyId('something')]));
 
 var_dump($id);
 var_dump($messageDispatcher->messages);

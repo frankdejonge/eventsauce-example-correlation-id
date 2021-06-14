@@ -4,7 +4,7 @@ namespace FrankDeJonge\CommandIdCorrelation;
 
 use EventSauce\EventSourcing\AggregateRootRepository;
 
-class DummyService
+class DummyService implements CommandHandler
 {
     public function __construct(private AggregateRootRepository $repository)
     {

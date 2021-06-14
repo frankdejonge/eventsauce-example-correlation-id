@@ -5,10 +5,9 @@ use EventSauce\EventSourcing\Header;
 use EventSauce\EventSourcing\InMemoryMessageRepository;
 use EventSauce\EventSourcing\Message;
 use EventSauce\EventSourcing\MessageDispatcher;
-use EventSauce\EventSourcing\UnableToDispatchMessages;
 use FrankDeJonge\CommandIdCorrelation\CorrelatingMessageDecorator;
 use FrankDeJonge\CommandIdCorrelation\CorrelationIdTracker;
-use FrankDeJonge\CommandIdCorrelation\CorrelationTrackingConsumer;
+use FrankDeJonge\CommandIdCorrelation\DecoratingCommandHandler;
 use FrankDeJonge\CommandIdCorrelation\DummyAggregateRoot;
 use FrankDeJonge\CommandIdCorrelation\DummyService;
 use FrankDeJonge\CommandIdCorrelation\DummyId;
@@ -41,9 +40,8 @@ $decorator = new CorrelatingMessageDecorator($correlationIdTracker);
 $aggregateRootRepository = new EventSourcedAggregateRootRepository(DummyAggregateRoot::class, $messageRepository, $messageDispatcher, $decorator);
 
 $service = new DummyService($aggregateRootRepository);
-$actualConsumer = new HandleOriginalEvent($service);
-$consumer = new CorrelationTrackingConsumer($correlationIdTracker, $actualConsumer);
-
+$service = new DecoratingCommandHandler($correlationIdTracker, $service);
+$consumer = new HandleOriginalEvent($service);
 $consumer->handle(new Message(new OriginalEvent(), ['correlation-id' => $id = Uuid::uuid4()->toString(), Header::AGGREGATE_ROOT_ID => new DummyId('something')]));
 
 var_dump($id);

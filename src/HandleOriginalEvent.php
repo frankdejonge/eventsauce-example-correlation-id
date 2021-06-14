@@ -5,10 +5,11 @@ namespace FrankDeJonge\CommandIdCorrelation;
 use EventSauce\EventSourcing\AggregateRootRepository;
 use EventSauce\EventSourcing\Message;
 use EventSauce\EventSourcing\MessageConsumer;
+use Ramsey\Uuid\Uuid;
 
 class HandleOriginalEvent implements MessageConsumer
 {
-    public function __construct(private DummyService $service)
+    public function __construct(private CommandHandler $commandHandler)
     {
     }
 
@@ -20,6 +21,6 @@ class HandleOriginalEvent implements MessageConsumer
             return;
         }
 
-        $this->service->handle(new DoSomething($message->aggregateRootId()));
+        $this->commandHandler->handle(new DoSomething($message->aggregateRootId(), Uuid::fromString($message->header('correlation-id'))));
     }
 }

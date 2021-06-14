@@ -1,0 +1,19 @@
+{
+    "name": "frankdejonge/example-command-id-correlation",
+    "autoload": {
+        "psr-4": {
+            "FrankDeJonge\\CommandIdCorrelation\\": "src"
+        }
+    },
+    "require": {
+        "php": "8.0",
+        "eventsauce/eventsauce": "^1.0",
+        "ramsey/uuid": "^4.1"
+    },
+    "authors": [
+        {
+            "name": "Frank de Jonge",
+            "email": "info@frankdejonge.nl"
+        }
+    ]
+}
